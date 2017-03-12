@@ -7,7 +7,7 @@ Enables multiple selection from given set of items.
 <custom-element-demo>
   <template>
     <script src="../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="paper-multi-select.html">
+    <link rel="import" href="../paper-multi-select/paper-multi-select.html">
     <next-code-block></next-code-block>
   </template>
 </custom-element-demo>
