@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>paper-multi-select demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../paper-multi-select.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic paper-multi-select demo</h3>
+      <demo-snippet>
+        <template>
+          <paper-multi-select 
+              chips='["Luffy", "Zoro", "Sanji", "Nami", "Ussop", "Robin", "Brook", "Chopper", "Franky"]'
+              label="Favorite characters">
+          </paper-multi-select>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>

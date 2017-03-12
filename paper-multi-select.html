@@ -1,0 +1,88 @@
+<link rel="import" href="../iron-icons/iron-icons.html">
+
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-input/paper-input.html">
+
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="paper-multi-select">
+  <style>
+    :host {
+      display: block;
+      min-width: 300px;
+      --paper-input-container-focus-color: var(--paper-green-500);
+    }
+
+    paper-checkbox {
+      min-width: 300px;
+      --paper-checkbox-checked-color: var(--paper-green-500);
+      --paper-checkbox-checked-ink-color: var(--paper-green-500);
+      --paper-checkbox-unchecked-color: var(--paper-green-900);
+      --paper-checkbox-unchecked-ink-color: var(--paper-green-900);
+      --paper-checkbox-label-spacing: 0;
+      --paper-checkbox-margin: 8px;
+    }
+
+    #info {
+      color: var(--paper-green-900);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    #info #more-string {
+      color: var(--paper-green-500);
+      text-decoration: underline;
+    }
+
+    #dialog {
+      --paper-dialog-color: var(--paper-green-900);
+      --paper-dialog-button-color: var(--paper-green-900);
+      max-width: 700px;
+      min-width: 700px;
+    }
+
+    paper-dialog-scrollable {
+      @apply(--layout-vertical);
+    }
+
+    paper-dialog  > * {
+      margin-top: 10px;
+    }
+
+    iron-icon[suffix] {
+      color: var(--paper-green-900);
+      opacity: .8;
+    }
+  </style>
+  <template>
+    <paper-input on-tap="trigger" label="{{label}}" value="{{value}}">
+      <iron-icon icon="more-horiz" suffix></iron-icon>
+    </paper-input>
+    <span id="info" on-tap="trigger">
+      <span id="lead-string"></span>
+      <span id="more-string"></span>
+    </span>
+
+    <paper-dialog id="dialog">
+      <paper-input id="search-item" label="Choose {{label}}" type="text"
+                   value="{{filterVal::input}}">
+        <iron-icon icon="search" prefix></iron-icon>
+      </paper-input>
+      <paper-dialog-scrollable>
+        <template is="dom-repeat" items="{{chips}}" filter="{{filter_(filterVal)}}">
+          <paper-checkbox class="chip" on-change="toggleItemState_"
+                          value="{{item}}" checked="{{fetchState_(item)}}">{{item}}</paper-checkbox>
+        </template>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="updateValues_">Update</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+  <script src="paper-multi-select.js"></script>
+</dom-module>

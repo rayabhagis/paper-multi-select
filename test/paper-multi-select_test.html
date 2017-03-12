@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>paper-multi-select test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../paper-multi-select.html">
+  </head>
+  <body>
+    <test-fixture id="basic">
+      <template>
+        <paper-multi-select></paper-multi-select>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('paper-multi-select', function() {
+        test('instantiating the element works', function() {
+          var element = fixture('basic');
+          assert.equal(element.is, 'paper-multi-select');
+        });
+      });
+    </script>
+  </body>
+</html>
