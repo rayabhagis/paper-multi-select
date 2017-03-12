@@ -2,6 +2,7 @@
   "name": "paper-multi-select",
   "description": "Enables multiple selection from given set of items.",
   "main": "paper-multi-select.html",
+  "license": "MIT",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
     "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#^1.1.5",
