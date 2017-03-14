@@ -1,6 +1,7 @@
 # \<paper-multi-select\>
 
 [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/rayabhagis/paper-multi-select)
+[![Build Status](https://travis-ci.org/rayabhagis/paper-multi-select.svg?branch=master)](https://travis-ci.org/rayabhagis/paper-multi-select)
 
 
 Enables multiple selection from given set of items.
