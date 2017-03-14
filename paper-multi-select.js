@@ -20,6 +20,11 @@ Polymer({
     chips: {
       type: Array,
     },
+
+    /** Value that will be used to filter the items on the dialog. */
+    filterVal: {
+      type: String,
+    },
   },
 
   /** Triggers the selector field. */
