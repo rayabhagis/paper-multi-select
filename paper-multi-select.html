@@ -1,19 +1,37 @@
+<link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
-
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../iron-behaviors/iron-button-state.html">
+<link rel="import" href="../iron-behaviors/iron-control-state.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 <link rel="import" href="../paper-input/paper-input.html">
 
-<link rel="import" href="../polymer/polymer.html">
-
 <!--
-`<paper-multi-select>` 
+`<paper-multi-select>`
 
-Polymer element that helps in multi selection of elements in 
+Polymer element that helps in multi selection of elements in
 the form. Populates the `paper-input` based on searchable selection of options using
 `paper-dialog`.
+
+### Styling
+
+ Custom property | Description | Default
+----------------|-------------|----------
+`--paper-multi-select` | Mixin to style the host element | `{}`
+`--paper-multi-select-checkbox` | Mixin to style the checkbox | `{}`
+`--paper-multi-select-info` | Mixin to style the info container | `{}`
+`--paper-multi-select-more-text` | Mixin to style the more text | `{}`
+`--paper-multi-select-disabled-text` | Mixin to style the disabled more text | `{}`
+`--paper-multi-select-dialog` | Mixin to style the dialog | `{}`
+`--paper-multi-select-dialog-elements` | Mixin to style all the elements within paper-dialog | `{}`
+`--paper-multi-select-icon-suffix` | Mixin to style the iron-icon suffix | `{}`
+`--paper-multi-select-buttons-container` | Mixin to style the button container on paper-dialog | `{}`
+`--paper-multi-select-lead-string` | Mixin to style the lead string | `{}`
+`--paper-multi-select-more-string` | Mixin to style the more string following the lead string | `{}`
 
 @demo demo/index.html
 -->
@@ -24,6 +42,7 @@ the form. Populates the `paper-input` based on searchable selection of options u
       display: block;
       min-width: 300px;
       --paper-input-container-focus-color: var(--paper-green-500);
+      @apply(--paper-multi-select);
     }
 
     paper-checkbox {
@@ -34,23 +53,31 @@ the form. Populates the `paper-input` based on searchable selection of options u
       --paper-checkbox-unchecked-ink-color: var(--paper-green-900);
       --paper-checkbox-label-spacing: 0;
       --paper-checkbox-margin: 8px;
+      @apply(--paper-multi-select-checkbox);
     }
 
     #info {
-      color: var(--paper-green-900);
       cursor: pointer;
       font-size: 12px;
+      @apply(--paper-multi-select-info);
     }
 
-    #info #more-string {
+    #info #moreString {
       color: var(--paper-green-500);
       text-decoration: underline;
+      @apply(--paper-multi-select-more-text);
+    }
+
+    span[disabled] {
+      opacity: 0.33;
+      @apply(--paper-multi-select-disabled-text);
     }
 
     #dialog {
       --paper-dialog-color: var(--paper-green-900);
       --paper-dialog-button-color: var(--paper-green-900);
       max-width: 700px;
+      @apply(--paper-multi-select-dialog);
     }
 
     paper-dialog-scrollable {
@@ -59,39 +86,271 @@ the form. Populates the `paper-input` based on searchable selection of options u
 
     paper-dialog  > * {
       margin-top: 10px;
+      @apply(--paper-multi-select-dialog-elements);
     }
 
     iron-icon[suffix] {
       color: var(--paper-green-900);
       opacity: .8;
+      @apply(--paper-multi-select-icon-suffix);
+    }
+
+    .buttons {
+      @apply(--paper-multi-select-buttons-container);
+    }
+
+    paper-button {
+      @apply(--paper-multi-select-button);
+    }
+    .lead-string {
+      @apply(--paper-multi-select-lead-string);
+    }
+    .more-string {
+      color: var(--paper-green-500);
+      text-decoration: underline;
+      @apply(--paper-multi-select-more-string);
     }
   </style>
   <template>
-    <paper-input on-tap="trigger" label="{{label}}" value="{{value}}">
+    <paper-input
+      type="text"
+      invalid="[[invalid]]"
+      readonly
+      disabled="[[disabled]]"
+      value="[[selectedItemLabel]]"
+      placeholder="[[placeholder]]"
+      error-message="[[errorMessage]]"
+      always-float-label="[[alwaysFloatLabel]]"
+      no-label-float="[[noLabelFloat]]"
+      label="[[label]]"
+      on-tap="trigger">
       <iron-icon icon="more-horiz" suffix></iron-icon>
     </paper-input>
-    <span id="info" on-tap="trigger">
-      <span id="lead-string"></span>
-      <span id="more-string"></span>
+    <span disabled$="[[disabled]]" id="info" on-tap="trigger">
+      <span class="lead-string" inner-h-t-m-l="[[_leadString]]"></span>
+      <span class="more-string" inner-h-t-m-l="[[_moreString]]"></span>
     </span>
 
     <paper-dialog id="dialog">
-      <paper-input id="search-item" label="Choose {{label}}" type="text"
-                   value="{{filterVal::input}}">
+      <paper-input
+        id="search-item"
+        label="Choose {{label}}"
+        type="text"
+        value="{{filterVal::input}}">
         <iron-icon icon="search" prefix></iron-icon>
       </paper-input>
       <paper-dialog-scrollable>
-        <template is="dom-repeat" items="{{chips}}" filter="{{filter_(filterVal)}}">
-          <paper-checkbox class="chip" on-change="toggleItemState_"
-                          value="{{item}}" checked="{{fetchState_(item)}}">{{item}}</paper-checkbox>
+        <template is="dom-repeat" items="{{chips}}" filter="{{_filter(filterVal)}}">
+          <paper-checkbox
+            class="chip"
+            on-change="_toggleItemState"
+            value="{{item}}"
+            checked="{{_fetchState(item)}}">
+            {{item}}
+          </paper-checkbox>
         </template>
       </paper-dialog-scrollable>
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm autofocus on-tap="updateValues_">Update</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="_updateValues">Update</paper-button>
       </div>
     </paper-dialog>
-
   </template>
-  <script src="paper-multi-select.js"></script>
+  <script>
+    Polymer({
+      is: 'paper-multi-select',
+
+      behaviors: [
+        Polymer.IronButtonState,
+        Polymer.IronControlState,
+        Polymer.IronFormElementBehavior,
+        Polymer.IronValidatableBehavior
+      ],
+
+      properties: {
+        /** The derived "label" of the currently selected item. */
+        selectedItemLabel: {
+          type: String,
+          notify: true
+        },
+
+        /** List of selected items */
+        selectedItems: {
+          type: Array,
+          notify: true
+        },
+
+        /** The label for the dropdown. */
+        label: String,
+
+        /** The placeholder for the dropdown. */
+        placeholder: String,
+
+        /** The error message to display when invalid. */
+        errorMessage: String,
+
+        /** Set to true to disable the floating label. */
+        noLabelFloat: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
+        /** Set to true to always float the label. */
+        alwaysFloatLabel: {
+          type: Boolean,
+          value: false
+        },
+
+        /** Value of the component. */
+        selectedItemLabel: String,
+
+        /** Items that will be used to populate the options/chips. */
+        chips: Array,
+
+        /** Value that will be used to filter the items on the dialog. */
+        filterVal: String,
+        _leadString: String,
+        _moreString: String
+      },
+
+      observers: [
+        '_setItemLabel(selectedItems, selectedItems.*)',
+        '_setSelectedItems(selectedItems)'
+      ],
+
+      /** Triggers the selector field. */
+      trigger() {
+        if (this.disabled) return;
+        const {selectedItems} = this;
+        if (selectedItems && selectedItems.length > 0) {
+          const chips = this.querySelectorAll('.chip');
+          for (const chip of chips) {
+            chip.checked = this.selectedItems.includes(chip.value);
+          }
+        }
+        this.$.dialog.open();
+      },
+
+      /** @override */
+      ready() {
+        this.state = {};
+      },
+
+      /**
+       * set paper input label when there are preselected items, only on page load
+       * @param {Array} selected pre selected items
+       * @private
+       */
+      _setItemLabel(selected) {
+        this.selectedItemLabel = selected.join(', ');
+      },
+
+      /**
+       * set selection text when there are preselected items, only on page load
+       * @param {Array} selected pre selected items
+       * @private
+       */
+      _setSelectedItems(selected) {
+        const chips = [];
+        for (const item of selected) {
+          chips.push({value: item});
+        }
+        this._renderChips(chips);
+      },
+
+      /**
+       * Filters the items based on the input text or checkbox state of the item.
+       * @param {string} val Value of the input textbox.
+       * @return {boolean} Whether or not to populate after filter.
+       * @private
+       */
+      _filter(val) {
+        return function (item) {
+          if (!val) {
+            return true;
+          }
+
+          if (!item) {
+            return false;
+          }
+
+          const arr = Object.keys(this.state).filter(x => x === item);
+
+          if (arr.length > 0) {
+            return true;
+          }
+
+          val = val.toLowerCase();
+          item = item.toLowerCase();
+          return (item && item.indexOf(val) !== -1);
+        }.bind(this);
+      },
+
+      /**
+       * Updates the state of the checkbox on toggling.
+       * @param {Event} e Event that triggered this.
+       * @private
+       */
+      _toggleItemState(e) {
+        if (e.target.checked) {
+          this.state[e.target.value] = 1;
+        } else {
+          delete this.state[e.target.value];
+        }
+      },
+
+      /**
+       * @param {string} item Checkbox value.
+       * @return {boolean} State of the checkbox.
+       * @private
+       */
+      _fetchState(item) {
+        return (item in this.state);
+      },
+
+      /**
+       * Updates the value of the component based on the selection.
+       * @private
+       */
+      _updateValues() {
+        const selectedChips = this.querySelectorAll('.chip[checked]');
+        this._renderChips(selectedChips);
+        this.selectedItems = [];
+        for (const chip of selectedChips) {
+          this.push('selectedItems', chip.value);
+        }
+      },
+
+      _isItemChecked(item) {
+        return this.selectedItems.includes(item);
+      },
+
+      /**
+       * Renders the information based on the selection.
+       * @param {Array} items Items to be used for rendering.
+       * @private
+       */
+      _renderChips(items) {
+        const totalItems = items.length;
+        if (totalItems === 0) return;
+        const leadClues = [];
+        for (const [index, item] of items.entries()) {
+          leadClues.push(item.value);
+          if (index === 1) {
+            break;
+          }
+        }
+        this._leadString = '';
+        this._leadString += leadClues.join(', ');
+        if (totalItems === 1) {
+          this._moreString = ' has been selected';
+        } else if (totalItems > 2) {
+          this._moreString = ' +' + (totalItems - 2) + ' more item(s) selected';
+        } else if (totalItems !== 0) {
+          this._moreString = ' have been selected';
+        }
+      }
+    });
+  </script>
 </dom-module>
