@@ -1,0 +1,30 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../paper-multi-select.html">
+
+<dom-module id="multi-select-databinding-demo">
+	<style>
+
+	</style>
+	<template>
+		{{selectedItems}}
+          <paper-multi-select
+            chips='["Luffy", "Zoro", "Sanji", "Nami", "Ussop", "Robin", "Brook", "Chopper", "Franky"]'
+            label="Favorite characters"
+            selected-items="{{selectedItems}}">
+          </paper-multi-select>
+	</template>
+	<script>
+		Polymer({
+			is: 'multi-select-databinding-demo',
+			properties: {
+				selectedItems: {
+					type: Array,
+					observer: '_onSelectedItemsChange'
+				}
+			},
+			_onSelectedItemsChange(newVal, oldVal) {
+				console.log(this.is, '_onSelectedItemsChange', arguments);
+			}
+		});
+	</script>
+</dom-module>

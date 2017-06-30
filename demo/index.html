@@ -11,6 +11,7 @@
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../paper-multi-select.html">
+    <link rel="import" href="multi-select-databinding-demo.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
     </style>
@@ -24,6 +25,13 @@
             chips='["Luffy", "Zoro", "Sanji", "Nami", "Ussop", "Robin", "Brook", "Chopper", "Franky"]'
             label="Favorite characters">
           </paper-multi-select>
+        </template>
+      </demo-snippet>
+
+      <h3>Data binding demo</h3>
+      <demo-snippet>
+        <template is="dom-bind">
+          <multi-select-databinding-demo></multi-select-databinding-demo>
         </template>
       </demo-snippet>
     </div>

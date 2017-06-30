@@ -321,10 +321,11 @@ the form. Populates the `paper-input` based on searchable selection of options u
         this._moreString = '';
 
         this._renderChips(selectedChips);
-        this.selectedItems = [];
+        var selectedItems = [];
         for (const chip of selectedChips) {
-          this.push('selectedItems', chip.value);
+          selectedItems.push(chip.value);
         }
+        this.set('selectedItems', selectedItems);
       },
 
       _isItemChecked(item) {
