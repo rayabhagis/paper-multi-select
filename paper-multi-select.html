@@ -136,7 +136,7 @@ the form. Populates the `paper-input` based on searchable selection of options u
         id="search-item"
         label="Choose {{label}}"
         type="text"
-        value="{{filterVal::input}}">
+        value="{{filterVal}}">
         <iron-icon icon="search" prefix></iron-icon>
       </paper-input>
       <paper-dialog-scrollable>
@@ -202,9 +202,6 @@ the form. Populates the `paper-input` based on searchable selection of options u
           value: false
         },
 
-        /** Value of the component. */
-        selectedItemLabel: String,
-
         /** Items that will be used to populate the options/chips. */
         chips: Array,
 
@@ -243,7 +240,7 @@ the form. Populates the `paper-input` based on searchable selection of options u
        * @private
        */
       _setItemLabel(selected) {
-        this.selectedItemLabel = selected.join(', ');
+        this.set('selectedItemLabel', selected.join(', '));
       },
 
       /**
@@ -314,17 +311,18 @@ the form. Populates the `paper-input` based on searchable selection of options u
        * @private
        */
       _updateValues() {
-        const selectedChips = this.querySelectorAll('.chip[checked]');
+        const selectedChips = Polymer.dom(this.root).querySelectorAll('.chip[checked]');
 
         //reset selection string
         this._leadString = '';
         this._moreString = '';
 
         this._renderChips(selectedChips);
-        this.selectedItems = [];
+        var selectedItems = [];
         for (const chip of selectedChips) {
-          this.push('selectedItems', chip.value);
+          selectedItems.push(chip.value);
         }
+        this.set('selectedItems', selectedItems);
       },
 
       _isItemChecked(item) {
