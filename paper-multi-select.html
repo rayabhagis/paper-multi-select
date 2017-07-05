@@ -144,8 +144,7 @@ the form. Populates the `paper-input` based on searchable selection of options u
           <paper-checkbox
             class="chip"
             on-change="_toggleItemState"
-            value="{{getValue(item)}}"
-            checked="{{_fetchState(item)}}">
+            value="{{getValue(item)}}">
             {{getName(item)}}
           </paper-checkbox>
         </template>
@@ -220,8 +219,8 @@ the form. Populates the `paper-input` based on searchable selection of options u
       trigger() {
         if (this.disabled) return;
         const {selectedItems} = this;
-        if (selectedItems && selectedItems.length > 0) {
-          const chips = this.querySelectorAll('.chip');
+        if (selectedItems) {
+          const chips = Polymer.dom(this.root).querySelectorAll('.chip');
           for (const chip of chips) {
             chip.checked = this.selectedItems.includes(chip.value);
           }
@@ -311,15 +310,6 @@ the form. Populates the `paper-input` based on searchable selection of options u
       },
 
       /**
-       * @param {string} item Checkbox value.
-       * @return {boolean} State of the checkbox.
-       * @private
-       */
-      _fetchState(item) {
-        return (item in this.state);
-      },
-
-      /**
        * Updates the value of the component based on the selection.
        * @private
        */
@@ -336,10 +326,6 @@ the form. Populates the `paper-input` based on searchable selection of options u
           selectedItems.push(chip.value);
         }
         this.set('selectedItems', selectedItems);
-      },
-
-      _isItemChecked(item) {
-        return this.selectedItems.includes(item);
       },
 
       /**
