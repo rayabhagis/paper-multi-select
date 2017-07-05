@@ -2,19 +2,19 @@ language: node_js
 sudo: required
 dist: trusty
 addons:
-  firefox: latest
+  firefox: latest-esr
   apt:
     sources:
       - google-chrome
     packages:
       - google-chrome-stable
 node_js:
-  - '6'
-  - '5'
-  - '4'
+  - node
+before_install:
+  - "if [ -d node_modules ] && [ x$(cat node_modules/.last-node-version 2>/dev/null) != x$(node -e 'console.log(process.version)') ]; then npm rebuild --update-binary && node -e 'console.log(process.version)' > node_modules/.last-node-version; fi"
 before_script:
-  - npm install -g bower polylint web-component-tester
-  - bower install
-  - polylint
+  - npm install web-component-tester bower polylint
+  - $(npm bin)/bower install
+  - $(npm bin)/polylint --no-recursion
 script:
-  - xvfb-run wct
+  - xvfb-run $(npm bin)/wct
