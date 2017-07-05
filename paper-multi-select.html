@@ -136,7 +136,7 @@ the form. Populates the `paper-input` based on searchable selection of options u
         id="search-item"
         label="Choose {{label}}"
         type="text"
-        value="{{filterVal::input}}">
+        value="{{filterVal}}">
         <iron-icon icon="search" prefix></iron-icon>
       </paper-input>
       <paper-dialog-scrollable>
@@ -144,9 +144,8 @@ the form. Populates the `paper-input` based on searchable selection of options u
           <paper-checkbox
             class="chip"
             on-change="_toggleItemState"
-            value="{{item}}"
-            checked="{{_fetchState(item)}}">
-            {{item}}
+            value="{{getValue(item)}}">
+            {{getName(item)}}
           </paper-checkbox>
         </template>
       </paper-dialog-scrollable>
@@ -202,9 +201,6 @@ the form. Populates the `paper-input` based on searchable selection of options u
           value: false
         },
 
-        /** Value of the component. */
-        selectedItemLabel: String,
-
         /** Items that will be used to populate the options/chips. */
         chips: Array,
 
@@ -223,8 +219,8 @@ the form. Populates the `paper-input` based on searchable selection of options u
       trigger() {
         if (this.disabled) return;
         const {selectedItems} = this;
-        if (selectedItems && selectedItems.length > 0) {
-          const chips = this.querySelectorAll('.chip');
+        if (selectedItems) {
+          const chips = Polymer.dom(this.root).querySelectorAll('.chip');
           for (const chip of chips) {
             chip.checked = this.selectedItems.includes(chip.value);
           }
@@ -243,7 +239,7 @@ the form. Populates the `paper-input` based on searchable selection of options u
        * @private
        */
       _setItemLabel(selected) {
-        this.selectedItemLabel = selected.join(', ');
+        this.set('selectedItemLabel', selected.join(', '));
       },
 
       /**
@@ -257,6 +253,15 @@ the form. Populates the `paper-input` based on searchable selection of options u
           chips.push({value: item});
         }
         this._renderChips(chips);
+      },
+
+      getValue:function(i){
+        if(typeof i === 'object') return i.value;
+        return i;
+      },
+      getName:function(i){
+        if(typeof i === 'object') return i.name;
+        return i;
       },
 
       /**
@@ -282,6 +287,10 @@ the form. Populates the `paper-input` based on searchable selection of options u
           }
 
           val = val.toLowerCase();
+          if(typeof item === 'object')
+          {
+            return (item && item.name.toLowerCase().indexOf(val) !== -1);
+          }
           item = item.toLowerCase();
           return (item && item.indexOf(val) !== -1);
         }.bind(this);
@@ -301,20 +310,11 @@ the form. Populates the `paper-input` based on searchable selection of options u
       },
 
       /**
-       * @param {string} item Checkbox value.
-       * @return {boolean} State of the checkbox.
-       * @private
-       */
-      _fetchState(item) {
-        return (item in this.state);
-      },
-
-      /**
        * Updates the value of the component based on the selection.
        * @private
        */
       _updateValues() {
-        const selectedChips = this.querySelectorAll('.chip[checked]');
+        const selectedChips = Polymer.dom(this.root).querySelectorAll('.chip[checked]');
 
         //reset selection string
         this._leadString = '';
@@ -326,10 +326,6 @@ the form. Populates the `paper-input` based on searchable selection of options u
           selectedItems.push(chip.value);
         }
         this.set('selectedItems', selectedItems);
-      },
-
-      _isItemChecked(item) {
-        return this.selectedItems.includes(item);
       },
 
       /**
