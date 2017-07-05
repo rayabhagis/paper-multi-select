@@ -144,9 +144,9 @@ the form. Populates the `paper-input` based on searchable selection of options u
           <paper-checkbox
             class="chip"
             on-change="_toggleItemState"
-            value="{{item}}"
+            value="{{getValue(item)}}"
             checked="{{_fetchState(item)}}">
-            {{item}}
+            {{getName(item)}}
           </paper-checkbox>
         </template>
       </paper-dialog-scrollable>
@@ -256,6 +256,15 @@ the form. Populates the `paper-input` based on searchable selection of options u
         this._renderChips(chips);
       },
 
+      getValue:function(i){
+        if(typeof i === 'object') return i.value;
+        return i;
+      },
+      getName:function(i){
+        if(typeof i === 'object') return i.name;
+        return i;
+      },
+
       /**
        * Filters the items based on the input text or checkbox state of the item.
        * @param {string} val Value of the input textbox.
@@ -279,6 +288,10 @@ the form. Populates the `paper-input` based on searchable selection of options u
           }
 
           val = val.toLowerCase();
+          if(typeof item === 'object')
+          {
+            return (item && item.name.toLowerCase().indexOf(val) !== -1);
+          }
           item = item.toLowerCase();
           return (item && item.indexOf(val) !== -1);
         }.bind(this);
