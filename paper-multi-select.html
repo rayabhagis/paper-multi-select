@@ -102,6 +102,9 @@ the form. Populates the `paper-input` based on searchable selection of options u
     paper-button {
       @apply(--paper-multi-select-button);
     }
+    paper-button[dialog-confirm] {
+      @apply(--paper-multi-select-button-dialog-confirm);
+    }
     .lead-string {
       @apply(--paper-multi-select-lead-string);
     }
@@ -151,7 +154,7 @@ the form. Populates the `paper-input` based on searchable selection of options u
       </paper-dialog-scrollable>
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm autofocus on-tap="_updateValues">Update</paper-button>
+        <paper-button dialog-confirm on-tap="_updateValues">Update</paper-button>
       </div>
     </paper-dialog>
   </template>
